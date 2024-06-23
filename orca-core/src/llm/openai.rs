@@ -152,6 +152,10 @@ pub struct OpenAI {
     /// This URL is set to https://api.openai.com/v1/chat/completions by default.
     url: String,
 
+    /// URL of the OpenAI Embedding API
+    /// This URL is set to https://api.openai.com/v1/embeddings by default.
+    embedding_url: String,
+
     /// API key for the OpenAI API
     /// This key is stored in the OPENAI_API_KEY environment variable.
     api_key: String,
@@ -197,6 +201,7 @@ impl Default for OpenAI {
         Self {
             client: Client::new(),
             url: OPENAI_COMPLETIONS_URL.to_string(),
+            embedding_url: OPENAI_EMBEDDING_URL.to_string(),
             api_key: std::env::var("OPENAI_API_KEY").expect("OPENAI_API_KEY not set"),
             model: "gpt-3.5-turbo-1106".to_string(),
             emedding_model: "text-embedding-ada-002".to_string(),
@@ -215,9 +220,15 @@ impl OpenAI {
         Self::default()
     }
 
-    /// Set OpenAI endpoint url
+    /// Set OpenAI API url
     pub fn with_url(mut self, url: &str) -> Self {
         self.url = url.to_string();
+        self
+    }
+
+    /// Set OpenAI Embedding API url
+    pub fn with_embedding_url(mut self, url: &str) -> Self {
+        self.embedding_url = url.to_string();
         self
     }
 
@@ -297,7 +308,7 @@ impl OpenAI {
 
         let req = self
             .client
-            .post(OPENAI_EMBEDDING_URL)
+            .post(&self.embedding_url)
             .header("Content-Type", "application/json")
             .header("Authorization", format!("Bearer {}", self.api_key))
             .json(&payload)
