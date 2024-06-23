@@ -215,6 +215,12 @@ impl OpenAI {
         Self::default()
     }
 
+    /// Set OpenAI endpoint url
+    pub fn with_url(mut self, url: &str) -> Self {
+        self.url = url.to_string();
+        self
+    }
+
     /// Set model to use
     /// e.g. "davinci", "gpt-3.5-turbo"
     pub fn with_model(mut self, model: &str) -> Self {
